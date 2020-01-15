@@ -1,0 +1,99 @@
+*&---------------------------------------------------------------------*
+*& Report  ZSIB_ORNEK3
+*&
+*&---------------------------------------------------------------------*
+*&
+*&
+*&---------------------------------------------------------------------*
+
+REPORT zsib_ornek3.
+
+*TYPES: BEGIN OF gtys_muhendis,  " gtys_muhendis adında bir structure
+*       isim    TYPE c LENGTH 30,
+*       soyisim TYPE c LENGTH 30,
+*       yas     TYPE i,
+*  END OF gtys_muhendis.
+*
+*
+*DATA : gt_muhendis TYPE TABLE OF gtys_muhendis, "muhendis structureının listesini tutan tablo
+*       gs_muhendis TYPE gtys_muhendis.    "gtyt_muhendisler tipini tutan bir gt_muhendisler adında bir internal atble
+*
+*gs_muhendis-isim         = 'FIRAT'.    " birinci kayit
+*gs_muhendis-soyisim      = 'ALBAYATI'.
+*gs_muhendis-yas          = 26.
+*
+*APPEND gs_muhendis to gt_muhendis. " satır satır gt_muhendisler tablosuna ekler
+*
+*CLEAR gs_muhendis.
+*
+*gs_muhendis-isim         = 'OMER'.    " ikinci kayit
+*gs_muhendis-soyisim      = 'ALBAYATI'.
+*gs_muhendis-yas          = 30.
+*
+*APPEND gs_muhendis to gt_muhendis. " satır satır gt_muhendisler tablosuna ekler
+*
+*LOOP at gt_muhendis INTO gs_muhendis.
+*       WRITE:/ gs_muhendis-isim,
+*               gs_muhendis-soyisim,
+*               gs_muhendis-yas.
+*ENDLOOP.
+
+**************************************************************************************************
+
+" ikinci yöntem 1.ve2. kayitları başka türlü atma
+
+TYPES: BEGIN OF gtys_muhendis,  " gtys_muhendis adında bir structure
+       isim    TYPE c LENGTH 30,
+       soyisim TYPE c LENGTH 30,
+       yas     TYPE i,
+  END OF gtys_muhendis.
+
+
+DATA : gt_muhendis     TYPE TABLE OF gtys_muhendis, "muhendis structureının listesini tutan tablo
+       gs_muhendis     TYPE gtys_muhendis,    "gtyt_muhendisler tipini tutan bir gt_muhendisler adında bir internal atble
+       gv_satir_sayisi TYPE i.
+
+DEFINE kayit_at.
+  gs_muhendis-isim     = &1.
+  gs_muhendis-soyisim  = &2.
+  gs_muhendis-yas      = &3.
+APPEND gs_muhendis to gt_muhendis. " satır satır gt_muhendisler tablosuna ekler
+  CLEAR gs_muhendis.
+
+END-OF-DEFINITION.
+
+kayit_at 'fırat ' 'albayatı' '26'.
+kayit_at 'vatan ' 'albayatı' '30'.
+kayit_at 'omer  ' 'albayatı' '35'.
+kayit_at 'mert  ' 'albayatı' '30'.
+kayit_at 'mehmet' 'albayatı' '35'.
+
+LOOP AT gt_muhendis INTO gs_muhendis.
+  if sy-tabix > 2. " önemli iki kayit'tan sonra lopptan çıkar yani iki kayit yazar ekrana   veya chek sy-tabix <=2.
+    exit.
+  ENDIF.
+  WRITE:/ gs_muhendis-isim,
+          gs_muhendis-soyisim,
+          gs_muhendis-yas.
+ENDLOOP.
+
+DESCRIBE TABLE gt_muhendis lines gv_satir_sayisi.   " tabloda kayıt sayısını yazar
+WRITE : gv_satir_sayisi.
+
+
+" chek sy-tabix <=2.                              yazarsak 3.döngüde durur ve lopptan çıkar
+" chek <3 or >6.                                  3ten küçük  6 büyük kayitları yazar
+"abap'ta index sayısı 1 den başlar
+"insert gs_muhendis into gt_muhendis index 1.     gs_muhendis satrını gt_muhendis tablosunun birinci satrına ekler
+"delete gt_muhendis index 2.                      gt_muhendis tablosundaki 2.satrı siler
+"delete gt_muhendis where yas<30                  yası 30dan kucuk olan kayıtları siler
+
+"read table gt_muhendis into gs_muhendis with key isim = 'firat'.   intrenal tablodan tek bir kayit okumak için read table kullanırız
+
+"read table ve select kodu yazdıktan sonra her zaman bu kodu yazarız
+" if sy-subrce is inital.    veya is = 0.  veya is eq 0.     bunu kullanmasak program hiç birşey bulmasa hata gibi görür
+"  ........
+"endif
+
+"break-point xfalbay
+"break-point
